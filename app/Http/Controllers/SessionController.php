@@ -3,18 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SessionController extends Controller
 {
-    public function login()
+    public function create()
     {
         return view('sessions.create');
     }
 
-    public function store(Request $reuest)
+    public function store(Request $request)
     {
         $this->validate($request, [
-        'email'=>'reuqired',
+        'email'=>'required',
         'password'=>'required'
       ]);
         $credentials = [
@@ -22,7 +23,7 @@ class SessionController extends Controller
                  'password' => $request->password,
              ];
 
-        if (Auth::attemp($credentials, $request->has('remember'))) {
+        if (Auth::attempt($credentials, $request->has('remember'))) {
             session()->flash('success', '欢迎回来~');
             return redirect()->route('users.show', [Auth::user()]);
         } else {
