@@ -11,6 +11,9 @@ class SessionController extends Controller
         $this->middleware('auth', [
             'only' => ['edit', 'update']
         ]);
+        $this->middleware('guest',[
+            'only'=>['create']
+        ]);
     }
 
     public function create()

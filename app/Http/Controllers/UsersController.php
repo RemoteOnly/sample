@@ -8,10 +8,20 @@ use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller
 {
-    public function __construct(){
-        $this->middleware('auth',[
-            'only'=>['edit']
+    public function __construct()
+    {
+        $this->middleware('auth', [
+            'only' => ['edit', 'update','destroy']
         ]);
+        $this->middleware('guest', [
+            'only' => ['create']
+        ]);
+    }
+
+    public function index()
+    {
+        $users = User::paginate(30);
+        return view('users.index', compact('users'));
     }
 
     public function create()
@@ -46,7 +56,7 @@ class UsersController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        $this->authorize('update' , $user);
+        $this->authorize('update', $user);
         return view('users.edit', compact('user'));
     }
 
@@ -66,4 +76,13 @@ class UsersController extends Controller
 
         return redirect()->route('users.show', $id);
     }
+
+    public function destroy($id)
+   {
+       $user = User::findOrFail($id);
+       $this->authorize('destroy', $user);
+       $user->delete();
+       session()->flash('success', '成功删除用户！');
+       return back();
+   }
 }
